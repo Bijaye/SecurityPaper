@@ -4,8 +4,8 @@ This is a repository for security paper I want to keep.
 
 
 ## list paper and remote and locol link
-* [NEWS: Modern PGP is unusable according to academic study](http://www.net-security.org/malware_news.php?id=3141) | [local](http://www.net-security.org/malware_news.php?id=3141) | [Paper](http://arxiv.org/pdf/1510.08555v1.pdf) | [local](https://github.com/gasgas4/SecurityPaper/blob/master/Paper/1510.08555v1.pdf) 
-* []()
+* [Cybersecurity for Beginners - CyberWar: Si Vis Pacem, Para Bellum](http://www.net-security.org/malware_news.php?id=3141) | [local](http://www.net-security.org/malware_news.php?id=3141) | [Paper](http://arxiv.org/pdf/1510.08555v1.pdf) | [local](https://github.com/gasgas4/SecurityPaper/blob/master/Paper/1510.08555v1.pdf) 
+* [Chimera crypto-ransomware is hitting German companies](http://www.net-security.org/malware_news.php?id=3141) | [local]()
 
 
 Chimera crypto-ransomware is hitting German companies
