@@ -1,0 +1,669 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><!--
+                              _.._        ,------------.
+                           ,'      `.    ( We want you! )
+                          /  __) __` \    `-,----------'
+                         (  (`-`(-')  ) _.-'
+                         /)  \  = /  (
+                        /'    |--' .  \
+                       (  ,---|  `-.)__`
+                        )(  `-.,--'   _`-.
+                       '/,'          (  Uu",
+                        (_       ,    `/,-' )
+                        `.__,  : `-'/  /`--'
+                          |     `--'  |
+                          `   `-._   /
+                           \        (
+                           /\ .      \.  freebuf
+                          / |` \     ,-\
+                         /  \| .)   /   \
+                        ( ,'|\    ,'     :
+                        | \,`.`--"/      }
+                        `,'    \  |,'    /
+                       / "-._   `-/      |
+                       "-.   "-.,'|     ;
+                      /        _/["---'""]
+                     :        /  |"-     '
+                     '           |      /
+                                 `      |
+-->
+<!-- saved from url=(0051)http://www.freebuf.com/articles/terminal/73517.html -->
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<title>
+  安卓Stagefright高危漏洞初探 - FreeBuf.COM | 关注黑客与极客</title>
+<meta name="description" content="序
+惊闻Stagefright曝出重大漏洞，可以造成远程代码执行，甚至发条彩信，就有可能入侵用户移动设备。这听起来可是难得一遇的大漏洞啊，作为安全人员，自然要好好扒一扒内幕了。
+山重水复
+从新闻来看，出于某些考虑…">
+<meta name="keywords" content="">
+<meta name="baidu-site-verification" content="nKKKqQxp6R">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="renderer" content="webkit">
+<meta property="qc:admins" content="6620477777662552566375">
+<link rel="stylesheet" id="wpfp-css" href="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/wpfp.css" type="text/css">
+<link rel="stylesheet" id="wp-recentcomments-css" href="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/wp-recentcomments.css" type="text/css" media="screen">
+<link rel="stylesheet" id="mycred-widget-css" href="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/widget.css" type="text/css" media="all">
+
+
+<link rel="prev" title="寻医问药网招聘信息安全岗" href="http://www.freebuf.com/jobs/73468.html">
+<link rel="next" title="我是如何在Periscope管理面板中绕过Google认证的" href="http://www.freebuf.com/articles/web/73383.html">
+<link rel="canonical" href="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客.html">
+<link rel="shortlink" href="http://www.freebuf.com/?p=73517">
+
+<link rel="stylesheet" href="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/highslide.css" type="text/css">
+
+
+          
+      <link rel="stylesheet" type="text/css" href="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/style.css">
+      	<style type="text/css">.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}</style>
+<link rel="shortcut icon" href="http://static.freebuf.com/images/favicon.ico">
+<link href="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/bootstrap.min.css" rel="stylesheet" media="screen">
+<link href="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/style(1).css" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+<!--[if lt IE 9]>
+    <script src="http://www.freebuf.com/buf/themes/freebuf/js/html5shiv.min.js"></script>
+    <script src="http://www.freebuf.com/buf/themes/freebuf/js/respond.min.js"></script>
+<![endif]-->
+<style type="text/css">.highslide img {cursor: url(http://www.freebuf.com/buf/plugins/auto-highslide/images/graphics/zoomin.cur), pointer !important;}.highslide-viewport-size {position: fixed; width: 100%; height: 100%; left: 0; top: 0}</style><link rel="stylesheet" href="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/share_style1_24.css"><style type="text/css">.highslide img {cursor: url(http://www.freebuf.com/buf/plugins/auto-highslide/images/graphics/zoomin.cur), pointer !important;}.highslide-viewport-size {position: fixed; width: 100%; height: 100%; left: 0; top: 0}</style></head>
+
+<body>
+<!----------header---------->
+<div id="undefined-sticky-wrapper" class="sticky-wrapper" style="height: 70px;"><div class="main-header">
+  <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <div class="navbar-header">
+        <button class="navbar-toggle collapsed" aria-controls="navbar" aria-expanded="false" data-target="#navbar" data-toggle="collapse" type="button"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
+        <div class="logo"><a href="http://www.freebuf.com/"><img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/logo.png"></a><span class="visible-lg-block">关注黑客与极客</span></div>
+      </div>
+      <div id="navbar" class="navbar-collapse collapse globalnav" aria-expanded="false">
+        <ul class="nav nav-pills pull-left">
+          <li><a href="http://www.freebuf.com/">首页</a></li>
+          <li class="dropdown"> <a href="javascript:viod(0);" class="dropdown-toggle" data-toggle="dropdown">分类阅读<b class="caret"></b> </a>
+            <ul class="dropdown-menu article-nav">
+              <li> <strong>黑客</strong>
+                <div class="nav"> <a href="http://www.freebuf.com/vuls" target="_blank">漏洞</a> <a href="http://www.freebuf.com/tools" target="_blank">安全工具</a> <a href="http://www.freebuf.com/articles/web" target="_blank">WEB安全</a> <a href="http://www.freebuf.com/articles/system" target="_blank">系统安全</a> <a href="http://www.freebuf.com/articles/network" target="_blank">网络安全</a> <a href="http://www.freebuf.com/articles/wireless" target="_blank">无线安全</a> <a href="http://www.freebuf.com/articles/terminal" target="_blank">设备/客户端安全</a> <a href="http://www.freebuf.com/articles/database" target="_blank">数据库安全</a> <a href="http://www.freebuf.com/articles/security-management" target="_blank">安全管理</a></div>
+              </li>
+              <li> <strong>极客</strong>
+                <div class="nav"> <a href="http://www.freebuf.com/geek" target="_blank">极客有意思</a> <a href="http://www.freebuf.com/news/others" target="_blank">周边</a></div>
+              </li>
+              <li> <strong>特色</strong>
+                <div class="nav"><a href="http://www.freebuf.com/news/special" target="_blank">专题</a><a href="http://www.freebuf.com/articles/people" target="_blank">人物志</a><a href="http://www.freebuf.com/fevents" target="_blank">活动</a><a href="http://www.freebuf.com/video" target="_blank">视频</a><a href="http://www.freebuf.com/articles/neopoints" target="_blank">观点</a><a href="http://www.freebuf.com/jobs" target="_blank">招聘</a></div>
+              </li>
+            </ul>
+          </li>
+          <li class="dropdown"> <a href="javascript:viod(0);" class="dropdown-toggle" data-toggle="dropdown">活动<b class="caret"></b> </a>
+            <ul class="dropdown-menu activities-nav">
+                            <li>
+                <div class="activities-list">
+                  <p class="tit"><a href="http://freetalk.freebuf.com/" target="_blank">FREE TALK•北京站</a></p>
+                  <p class="state-over">已结束</p>
+                  <span class="time">2015-04-19</span> </div>
+              </li>
+                            <li>
+                <div class="activities-list">
+                  <p class="tit"><a href="http://freetalk.freebuf.com/shenzhen/" target="_blank">FREE TALK•深圳站</a></p>
+                  <p class="state-over">已结束</p>
+                  <span class="time">2014-12-20</span> </div>
+              </li>
+                            <li>
+                <div class="activities-list">
+                  <p class="tit"><a href="http://www.freebuf.com/act/danshen" target="_blank">FreeBuf单身节派对</a></p>
+                  <p class="state-over">已结束</p>
+                  <span class="time">2014-11-11</span> </div>
+              </li>
+                            <li><a href="http://www.freebuf.com/fevents" class="btn btn-default" target="_blank">查看全部</a></li>
+            </ul>
+          </li>
+          <li><a href="http://bar.freebuf.com/" target="_blank">小酒馆</a><span class="icon-betr"></span></li>
+          <li><a href="http://open.freebuf.com/" target="_blank">公开课</a></li>
+          <li><a href="http://shop.freebuf.com/" target="_blank">商城</a></li>
+          <li class="dropdown"> <a href="https://www.vulbox.com/" class="dropdown-toggle" data-toggle="dropdown">漏洞盒子<b class="caret"></b> </a><span class="icon-hot"></span>
+            <div class="dropdown-menu vulbox-nav">
+              <ul id="tab">
+                <li class="active" onclick="ntabs(this,0);"><a href="javascript:void(0)">测试项目</a></li>
+                <li class="normal" onclick="ntabs(this,1);"><a href="javascript:void(0)">黑板报</a></li>
+                <li class="normal" onclick="ntabs(this,2);"><a href="javascript:void(0)">白帽排行</a></li>
+              </ul>
+              <div class="vulbox-con" id="tab_content0">
+                <div class="test-project">
+                  <div class="vulbox-list">
+                <p class="info"><a href="http://www.vulbox.com/bounties/detail-123" title="某科技公司安全测试" target="_blank">某科技公司安全测试</a><span class="time">2015-07-27</span></p>
+                <p class="tags-senior">高级</p>
+              </div><div class="vulbox-list">
+                <p class="info"><a href="http://www.vulbox.com/bounties/detail-121" title="某P2P网站及APP安全测试" target="_blank">某P2P网站及APP安全测试</a><span class="time">2015-07-17</span></p>
+                <p class="tags-senior">高级</p>
+              </div>                  <div class="vulbox-list">
+                    <p class="info"><a target="_blank" title="互联网漏洞" href="http://www.vulbox.com/bounties/detail-72">互联网漏洞</a><span class="time">2014-12-29</span></p>
+                    <p class="tags-web">互联网</p>
+                  </div>
+                </div>
+                <div class="btn-check"><a href="https://www.vulbox.com/" target="_blank" class="btn btn-default">去漏洞盒子看看</a></div>
+              </div>
+              <div class="vulbox-con none" id="tab_content1">
+                <ul class="vulbox-news" id="bugs4">
+                <li><h4><a target="_blank" title="中国移动OA平台弱口令" href="https://www.vulbox.com/bugs/vulbox-2015-09793">中国移动OA平台弱口令</a></h4><span class="name"><a target="_blank" href="https://www.vulbox.com/whitehats/%E5%8C%BF%E5%90%8D%E8%80%85">匿名者</a></span></li><li><h4><a target="_blank" title="古井贡酒网上商城重置任意用户密码" href="https://www.vulbox.com/bugs/vulbox-2015-09788">古井贡酒网上商城重置任意用户密码</a></h4><span class="name"><a target="_blank" href="https://www.vulbox.com/whitehats/%E5%8C%BF%E5%90%8D%E8%80%85">匿名者</a></span></li><li><h4><a target="_blank" title="江苏省人民检察院举报信息泄漏" href="https://www.vulbox.com/bugs/vulbox-2015-09781">江苏省人民检察院举报信息泄漏</a></h4><span class="name"><a target="_blank" href="https://www.vulbox.com/whitehats/%E5%8C%BF%E5%90%8D%E8%80%85">匿名者</a></span></li><li><h4><a target="_blank" title="趣医网旗下某就医平台某漏洞致600w用户数据泄露" href="https://www.vulbox.com/bugs/vulbox-2015-09778">趣医网旗下某就医平台某漏洞致600w用户数据泄露</a></h4><span class="name"><a target="_blank" href="https://www.vulbox.com/whitehats/%E5%8C%BF%E5%90%8D%E8%80%85">匿名者</a></span></li></ul>
+                <div class="btn-check"><a href="https://www.vulbox.com/board" class="btn btn-default" target="_blank">去漏洞盒子看看</a></div>
+              </div>
+              <div class="vulbox-con none" id="tab_content2">
+                <div class="tabPanel">
+                  <ul>
+                    <li class="hit">按奖金</li>
+                    <li>按Rank</li>
+                    <li>按准确率</li>
+                  </ul>
+                  <div class="panes">
+                    <div id="topmoney3"> <div class="white-hat"><span class="sort">1</span><span class="photo"><a href="https://www.vulbox.com/whitehats/pwnsh4d0w" target="_blank"><img alt="" src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/6cc0c5d5630d61a3f4463c7114f1dcd1.jpg"></a></span><span class="name"><a href="https://www.vulbox.com/whitehats/pwnsh4d0w" target="_blank">pwnsh4d0w</a></span><span class="money">￥103900</span></div><div class="white-hat"><span class="sort">2</span><span class="photo"><a href="https://www.vulbox.com/whitehats/%E6%97%BA%E8%A7%92%E6%89%9B%E6%8A%8A%E5%AD%90" target="_blank"><img alt="" src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/2ec311abcabed3bd6f994775f6c20c55.png"></a></span><span class="name"><a href="https://www.vulbox.com/whitehats/%E6%97%BA%E8%A7%92%E6%89%9B%E6%8A%8A%E5%AD%90" target="_blank">旺角扛把子</a></span><span class="money">￥96430</span></div><div class="white-hat"><span class="sort">3</span><span class="photo"><a href="https://www.vulbox.com/whitehats/greg.wu" target="_blank"><img alt="" src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/pic14.png"></a></span><span class="name"><a href="https://www.vulbox.com/whitehats/greg.wu" target="_blank">greg.wu</a></span><span class="money">￥80500</span></div><div class="btn-check"><a href="https://www.vulbox.com/top" class="btn btn-default" target="_blank">去漏洞盒子看看</a></div></div>
+                    <div class="plan" id="toprank3" style="display: none;"> <div class="white-hat"><span class="sort">1</span><span class="photo"><a href="https://www.vulbox.com/whitehats/%E6%97%BA%E8%A7%92%E6%89%9B%E6%8A%8A%E5%AD%90" target="_blank"><img alt="" src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/2ec311abcabed3bd6f994775f6c20c55.png"></a></span><span class="name"><a href="https://www.vulbox.com/whitehats/%E6%97%BA%E8%A7%92%E6%89%9B%E6%8A%8A%E5%AD%90" target="_blank">旺角扛把子</a></span><span class="money">1704</span></div><div class="white-hat"><span class="sort">2</span><span class="photo"><a href="https://www.vulbox.com/whitehats/greg.wu" target="_blank"><img alt="" src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/pic8.png"></a></span><span class="name"><a href="https://www.vulbox.com/whitehats/greg.wu" target="_blank">greg.wu</a></span><span class="money">1594</span></div><div class="white-hat"><span class="sort">3</span><span class="photo"><a href="https://www.vulbox.com/whitehats/pwnsh4d0w" target="_blank"><img alt="" src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/6cc0c5d5630d61a3f4463c7114f1dcd1.jpg"></a></span><span class="name"><a href="https://www.vulbox.com/whitehats/pwnsh4d0w" target="_blank">pwnsh4d0w</a></span><span class="money">1250</span></div><div class="btn-check"><a href="https://www.vulbox.com/top" class="btn btn-default" target="_blank">去漏洞盒子看看</a></div></div>
+                    <div class="plan" id="topbug_ratio3" style="display: none;"> <div class="white-hat"><span class="sort">1</span><span class="photo"><a href="https://www.vulbox.com/whitehats/thanks" target="_blank"><img alt="" src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/300393b46b76859d1d7d4da7a33d769b.png"></a></span><span class="name"><a href="https://www.vulbox.com/whitehats/thanks" target="_blank">thanks</a></span><span class="money">100%</span></div><div class="white-hat"><span class="sort">2</span><span class="photo"><a href="https://www.vulbox.com/whitehats/ye_jiachun" target="_blank"><img alt="" src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/pic12.png"></a></span><span class="name"><a href="https://www.vulbox.com/whitehats/ye_jiachun" target="_blank">ye_jiachun</a></span><span class="money">100%</span></div><div class="white-hat"><span class="sort">3</span><span class="photo"><a href="https://www.vulbox.com/whitehats/%E4%BA%94%E6%9D%A1%E6%9D%A0" target="_blank"><img alt="" src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/f57910323f6c93f881a476e0d6c655a0.jpg"></a></span><span class="name"><a href="https://www.vulbox.com/whitehats/%E4%BA%94%E6%9D%A1%E6%9D%A0" target="_blank">五条杠</a></span><span class="money">100%</span></div><div class="btn-check"><a href="https://www.vulbox.com/top" class="btn btn-default" target="_blank">去漏洞盒子看看</a></div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+                <div class="main-login">
+          <ul class="nav nav-pills pull-right login">
+            <li class="pull-right"><a href="https://account.tophant.com/register.html">注册</a></li>
+            <li class="active pull-right"><a href="http://www.freebuf.com/oauth">登录</a></li>
+          </ul>
+        </div>
+              </div>
+    </div>
+  </nav>
+</div></div>
+ 
+ 
+<!----------header end---------->
+
+
+
+
+
+<div class="container pad-top35">
+  <div class="row clearfix">
+        <div class="col-md-9">
+      <div class="articlecontent">
+        <div class="title">
+          <h2> 安卓Stagefright高危漏洞初探 </h2>
+          <div class="property">
+		  		  <span class="name"><a href="http://www.freebuf.com/author/%e9%87%91%e5%b1%b1%e6%af%92%e9%9c%b8" title="由 金山毒霸 发布" rel="author">金山毒霸</a></span>
+		  		  <span class="icon-f"><a href="http://www.freebuf.com/bufer" target="_blank"><img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/f2.png" title="认证厂商"></a></span>
+		  <span class="time">2015-07-28</span>
+             
+		  <span class="look">共<strong>27555</strong>人围观，发现<strong>9</strong>个不明物体</span>
+		  <span class="tags">		  
+		  <a href="http://www.freebuf.com/articles/terminal">终端安全</a></span>	
+        <span class="tags_01"></span>			  
+		  </div>
+        </div>
+                        <div id="contenttxt">
+           <p style="margin-top: 15px;"><span style="color: rgb(0, 0, 0); font-size: 18px;"><strong>序</strong></span></p>
+<p><span style="color: rgb(0, 176, 80);"><strong>惊闻Stagefright曝出重大漏洞，可以造成远程代码执行，甚至发条彩信，就有可能入侵用户移动设备。这听起来可是难得一遇的大漏洞啊，作为安全人员，自然要好好扒一扒内幕了。</strong></span></p>
+<p style="margin-top: 15px;"><span style="color: rgb(0, 0, 0); font-size: 18px;"><strong>山重水复</strong></span></p>
+<p>从新闻来看，出于某些考虑，漏洞的发现者目前并没有公布相关的细节，而是决定要留到BlackHat上再进行详细的说明。也就是说，目前所知道就是Android系统的Stagefright库存在重大安全问题，具体是什么？想知道自己去Fuzz。</p>
+<p>虽然，看起来关于漏洞细节，并没有任何头绪。但是，作为安全人员，首先要坚信的一点，就是世界上没有不透风的墙！仔细研读漏洞的新闻稿，可以发现，该漏洞已经提交给了Google，并且Google迅速的进行了修复。同时发现，Google也已经把漏洞相关信息交给了部分合作伙伴。看完这些，就能确定，这漏洞目前还能扒。</p>
+<p>既然Google针对此漏洞，已经在源码中进行了修复。那么首先查看了Google的相关源码提交状态。</p>
+<p style="text-align: center;"><a href="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/14380763233810.png!small" class="highslide-image" onclick="return hs.expand(this);" target="_blank"><img data-original="http://image.3001.net/images/20150728/14380763233810.png!small" src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/14380763233810.png!small" title="1.png" style="display: inline;"></a></p>
+
+<p>简单翻阅了提交的log。发现了一些关于libstagefright安全问题的修复，但大多言简意赅，难以确定。</p>
+<p style="margin-top: 15px;"><span style="color: rgb(0, 0, 0); font-size: 18px;"><strong>柳暗花明</strong></span></p>
+<p>看起来从Google方面下手并不容易，好在Google已经将漏洞相关资料交给了合作伙伴，所以我们发现了CyanogenMod公布的一条消息。</p>
+<p style="text-align: center;"><a href="http://image.3001.net/images/20150728/14380763676104.png!small" class="highslide-image" onclick="return hs.expand(this);" target="_blank"><img data-original="http://image.3001.net/images/20150728/14380763676104.png!small" src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/grey.gif" title="2.png"></a></p>
+
+<p>也就是说，在CM12中已经对此漏洞进行了修复！</p>
+<p style="margin-top: 15px;"><span style="color: rgb(0, 0, 0); font-size: 18px;"><strong>顺藤摸瓜</strong></span></p>
+<p>随后，我们在github上找到了CM12的提交记录</p>
+<p style="text-align: center;"><a href="http://image.3001.net/images/20150728/14380764093239.png!small" class="highslide-image" onclick="return hs.expand(this);" target="_blank"><img data-original="http://image.3001.net/images/20150728/14380764093239.png!small" src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/grey.gif" title="3.png"></a></p>
+
+<p>可以看到，在CM12的最近提交中，都是对Stagefright相关漏洞的修复，根据这些修复内容，对漏洞大体上也就能有一些了解了！</p>
+<p style="margin-top: 15px;"><span style="color: rgb(0, 0, 0); font-size: 18px;"><strong>抽丝剥茧</strong></span></p>
+<p>我们对部分修复方案进行了简单分析。</p>
+<p><span style="color: rgb(0, 112, 192);"><strong>Bug: 20139950</strong></span></p>
+<p><a href="http://image.3001.net/images/20150728/14380764496300.png!small" class="highslide-image" onclick="return hs.expand(this);" target="_blank"><img data-original="http://image.3001.net/images/20150728/14380764496300.png!small" src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/grey.gif" title="4.png"></a></p>
+
+<p>该bug的位置在frameworks/av/media/libstagefright/SampleTable.cpp文件的SampleTable::setSampleToChunkParams函数中，从该bug的说明和修复上来看。是由于mNumSampleToChunkOffets值太大，可能造成溢出。相关代码如下</p>
+<p style="text-align: center;"><a href="http://image.3001.net/images/20150728/14380764835919.png!small" class="highslide-image" onclick="return hs.expand(this);" target="_blank"><img data-original="http://image.3001.net/images/20150728/14380764835919.png!small" src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/grey.gif" title="5.png"></a></p>
+
+<p>注意红线标注部分。可能会造成访问越界。从而引发安全问题。 &nbsp;&nbsp;</p>
+<p><span style="color: rgb(0, 112, 192);"><strong>Bug: 20139950</strong></span></p>
+<p style="text-align: center;"><a href="http://image.3001.net/images/20150728/14380816814241.png!small" class="highslide-image" onclick="return hs.expand(this);" target="_blank"><img data-original="http://image.3001.net/images/20150728/14380816814241.png!small" src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/grey.gif" title="33.png"></a></p>
+
+<p>该bug在frameworks/av/ media/libstagefright/ESDS.cpp的ESDS::parseESDescriptor函数中。直接从描述和修复代码中，就能看出来，是由于在解析过程中，对变量校验不严格，可能造成越界访问的问题。</p>
+<p><span style="color: rgb(0, 112, 192);"><strong>Bug: 20923261</strong></span></p>
+<p style="text-align: center;"><a href="http://image.3001.net/images/20150728/14380765502292.png!small" class="highslide-image" onclick="return hs.expand(this);" target="_blank"><img data-original="http://image.3001.net/images/20150728/14380765502292.png!small" src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/grey.gif" title="7.png"></a></p>
+
+<p>此漏洞产生于frameworks/av/media/libstagefright/MPEG4Extractor.cpp的MPEG4Extractor::parseChunk函数中。从截图就可以看到漏洞的全貌了。当chunk_data_size小于kSkipBytesOfDataBox时，红线部分就会变成一个负数，由于setData的最后一个参数类型是size_t，所以就会被解析成很大的正数，从而造成错误。</p>
+<p>其余漏洞产生原因类似，就不再一一进行描述了。</p>
+<p><span style="color: rgb(0, 0, 0); font-size: 18px;"><strong>总结</strong></span></p>
+<p>概览全部的修复代码，发现产生漏洞的原因，都是因为对数据校验完善造成的。此次曝光的只是Stagefright的问题。考虑到Android系统中包含了大量的文件解析代码，包括图片、压缩包、音频、视频等解码库。这些库在解析文件过程中，对数据进行严格的校验了吗？会不会明天又会爆出音频解码存在严重bug？这应该是值得开发者和安全从业者深思的问题。</p>
+<p><span style="color: rgb(0, 0, 0);"><strong>*作者：金山毒霸，转载须注明来自FreeBuf黑客与极客（FreeBuf.COM）</strong></span></p>
+        </div>
+        <div class="article-oper">
+        <!-- Baidu Button BEGIN -->
+        <div class="share float-l"><div class="bdsharebuttonbox bdshare-button-style1-24" data-bd-bind="1438150973772"><a href="http://www.freebuf.com/articles/terminal/73517.html#" class="bds_more" data-cmd="more"></a><a href="http://www.freebuf.com/articles/terminal/73517.html#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="http://www.freebuf.com/articles/terminal/73517.html#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="http://www.freebuf.com/articles/terminal/73517.html#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a></div>
+        </div>
+        <!-- Baidu Button END -->
+		<div class="statement">
+        <div class="but-col"><span class="wpfp-span"><img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/heart.png" alt="Favorite" title="Favorite" class="wpfp-img"><img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/loading.gif" alt="Loading" title="Loading" class="wpfp-hide wpfp-img"><a class="wpfp-link" href="http://www.freebuf.com/articles/terminal/73517.html?wpfpaction=add&amp;postid=73517" title="收藏该文" rel="nofollow">收藏该文</a></span></div>
+		  </div>
+		<span class="score float-r"></span>
+        </div>        
+        <div class=" panel panel-default author-info">
+          <div class="author-detial">
+		                <div class="user_photo"><img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/duba.jpg" width="50" height="50" alt="金山毒霸" class="avatar avatar-50 wp-user-avatar wp-user-avatar-50 photo"></div>
+            <p><span class="name"><a href="http://www.freebuf.com/author/%e9%87%91%e5%b1%b1%e6%af%92%e9%9c%b8" title="由 金山毒霸 发布" rel="author">金山毒霸</a></span>
+			<span class="icon-f"><a href="http://www.freebuf.com/bufer" target="_blank"><img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/f2.png" title="认证厂商"></a></span>
+			<span><i class="colour-red">8</i>篇文章</span><span>等级：<i class="colour-green">4</i>级</span></p>
+            <p>中国著名的反病毒软件</p>
+                      </div>
+                    <div class="but">
+		  <a href="http://www.freebuf.com/author/%E9%87%91%E5%B1%B1%E6%AF%92%E9%9C%B8" class="btn btn-default btn-home">个人主页</a>
+		  <a href="http://www.freebuf.com/user/pm?pmaction=newmessage&amp;to=%E9%87%91%E5%B1%B1%E6%AF%92%E9%9C%B8" class="btn btn-default btn-letter">发私信</a>
+		  </div>
+		          </div>
+                		        <div class="article-pager">
+          <ul>
+            <li class="previous"><span>上一篇：</span><a href="http://www.freebuf.com/news/73411.html" rel="prev">安卓曝大漏洞：一条彩信可控制手机，影响95%设备</a>			</li>
+            <li class="next"><span>下一篇：</span>
+			<a href="javascript:viod(0);" rel="next">本篇已是最新文章</a>			</li>
+          </ul>
+        </div>
+      </div>
+            <div class="comment-list">
+      <div class="main-tit02">
+		<a rel="nofollow" class="btnbtn-default btn-comment" href="http://www.freebuf.com/articles/terminal/73517.html#respond">发表评论</a>
+        <h3>已有 <span class="color_red">9</span> 条评论
+      </h3></div>
+      <ul>
+         <li class="comment even thread-even depth-1" id="li-comment-114314">
+    <div id="comment-114314">
+        <div class="photo">     <img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/pic6.png">     </div>
+    <div class="tit"> 
+	    <span class="name"> 疯er </span>
+        		<span class="explain">  </span>
+		<span class="time">&nbsp;2015-07-28</span>
+		<span class="time"> </span>
+        <span class="useragent_output_custom"></span>
+        <span class="useragent_output_custom"></span> 
+		<span class="reply">
+		        <!-- 正常情况 -->
+           <a onclick="return addComment.moveForm( 'comment-114314','114314', 'respond','73517' ) " href="http://www.freebuf.com/articles/terminal/73517.html?replytocom=114314#respond" class="comment-reply-link" rel="nofollow">回复</a>
+        	    </span>
+		<span class="floor">1楼</span>
+	</div>
+	    <div class="txt">
+	  <p class="useragent_output_custom"></p>
+      <p>沙发</p>
+<div class="vote" id="vote-114314"><span id="acv_stat_114314"></span><a class="ilike_icon" id="vote4-114314" href="javascript:acv_vote(114314,1);">亮了</a>(<span id="cos_support-114314">1</span>)</div>
+	</div></div>
+</li><!-- #comment-## -->
+<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-114316">
+    <div id="comment-114316">
+        <div class="photo">     <img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/pic8.png">     </div>
+    <div class="tit"> 
+	    <span class="name"> xusy2656<span class="weibo"></span> </span>
+        		<span class="explain">  </span>
+		<span class="time">&nbsp;2015-07-28</span>
+		<span class="time"> </span>
+        <span class="useragent_output_custom"></span>
+        <span class="useragent_output_custom"></span> 
+		<span class="reply">
+		        <!-- 正常情况 -->
+           <a onclick="return addComment.moveForm( 'comment-114316','114316', 'respond','73517' ) " href="http://www.freebuf.com/articles/terminal/73517.html?replytocom=114316#respond" class="comment-reply-link" rel="nofollow">回复</a>
+        	    </span>
+		<span class="floor">2楼</span>
+	</div>
+	    <div class="txt">
+	  <p class="useragent_output_custom"></p>
+      <p>转发微博</p>
+<div class="vote" id="vote-114316"><span id="acv_stat_114316"></span><a class="ilike_icon" id="vote4-114316" href="javascript:acv_vote(114316,1);">亮了</a>(<span id="cos_support-114316">0</span>)</div>
+	</div></div>
+</li><!-- #comment-## -->
+<li class="comment byuser comment-author-qiaoy even thread-even depth-1" id="li-comment-114317">
+    <div id="comment-114317">
+        <div class="photo"> <a href="http://www.freebuf.com/author/qiaoy">
+    <img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/baxi.jpg"></a>
+     </div>
+    <div class="tit"> 
+	    <span class="name"> <a href="http://www.freebuf.com/author/qiaoy" target="_blank">qiaoy&nbsp;</a>  </span>
+        		
+		<span class="icon-f"> </span>
+		<span class="rank">(1级)</span>
+				<span class="explain">  </span>
+		<span class="time">&nbsp;2015-07-28</span>
+		<span class="time"> </span>
+        <span class="useragent_output_custom"></span>
+        <span class="useragent_output_custom"></span> 
+		<span class="reply">
+		        <!-- 正常情况 -->
+           <a onclick="return addComment.moveForm( 'comment-114317','114317', 'respond','73517' ) " href="http://www.freebuf.com/articles/terminal/73517.html?replytocom=114317#respond" class="comment-reply-link" rel="nofollow">回复</a>
+        	    </span>
+		<span class="floor">3楼</span>
+	</div>
+	    <div class="txt">
+	  <p class="useragent_output_custom"></p>
+      <p>666666</p>
+<div class="vote" id="vote-114317"><span id="acv_stat_114317"></span><a class="ilike_icon" id="vote4-114317" href="javascript:acv_vote(114317,1);">亮了</a>(<span id="cos_support-114317">0</span>)</div>
+	</div></div>
+</li><!-- #comment-## -->
+<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-114319">
+    <div id="comment-114319">
+        <div class="photo">     <img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/pic8.png">     </div>
+    <div class="tit"> 
+	    <span class="name"> xxx </span>
+        		<span class="explain">  </span>
+		<span class="time">&nbsp;2015-07-28</span>
+		<span class="time"> </span>
+        <span class="useragent_output_custom"></span>
+        <span class="useragent_output_custom"></span> 
+		<span class="reply">
+		        <!-- 正常情况 -->
+           <a onclick="return addComment.moveForm( 'comment-114319','114319', 'respond','73517' ) " href="http://www.freebuf.com/articles/terminal/73517.html?replytocom=114319#respond" class="comment-reply-link" rel="nofollow">回复</a>
+        	    </span>
+		<span class="floor">4楼</span>
+	</div>
+	    <div class="txt">
+	  <p class="useragent_output_custom"></p>
+      <p>注意红线标注部分。可能会造成访问越界。从而引发安全问题。</p>
+<p>仔细看了一下，恩，但是没看出来问题，话说问题点是这么…要不你再往下搂两眼…</p>
+<p>别问我是谁，请叫我雷锋</p>
+<div class="vote" id="vote-114319"><span id="acv_stat_114319"></span><a class="ilike_icon" id="vote4-114319" href="javascript:acv_vote(114319,1);">亮了</a>(<span id="cos_support-114319">2</span>)</div>
+	</div></div>
+</li><!-- #comment-## -->
+<li class="comment even thread-even depth-1" id="li-comment-114320">
+    <div id="comment-114320">
+        <div class="photo">     <img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/pic10.png">     </div>
+    <div class="tit"> 
+	    <span class="name"> jduck </span>
+        		<span class="explain">  </span>
+		<span class="time">&nbsp;2015-07-28</span>
+		<span class="time"> </span>
+        <span class="useragent_output_custom"></span>
+        <span class="useragent_output_custom"></span> 
+		<span class="reply">
+		        <!-- 正常情况 -->
+           <a onclick="return addComment.moveForm( 'comment-114320','114320', 'respond','73517' ) " href="http://www.freebuf.com/articles/terminal/73517.html?replytocom=114320#respond" class="comment-reply-link" rel="nofollow">回复</a>
+        	    </span>
+		<span class="floor">5楼</span>
+	</div>
+	    <div class="txt">
+	  <p class="useragent_output_custom"></p>
+      <p>大锅，好歹整个poc才叫初探，翻译人家注释的源代码装b，关键是还分析错了，你们真的看懂代码了么？</p>
+<div class="vote" id="vote-114320"><span id="acv_stat_114320"></span><a class="ilike_icon" id="vote4-114320" href="javascript:acv_vote(114320,1);">亮了</a>(<span id="cos_support-114320">5</span>)</div>
+	</div></div>
+</li><!-- #comment-## -->
+<li class="comment byuser comment-author-wxx odd alt thread-odd thread-alt depth-1" id="li-comment-114336">
+    <div id="comment-114336">
+        <div class="photo"> <a href="http://www.freebuf.com/author/wxx">
+    <img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/wp-user-avatar-96x96.png"></a>
+     </div>
+    <div class="tit"> 
+	    <span class="name"> <a href="http://www.freebuf.com/author/wxx" target="_blank">wxx&nbsp;</a>  </span>
+        		
+		<span class="icon-f"> </span>
+		<span class="rank">(1级)</span>
+				<span class="explain">  </span>
+		<span class="time">&nbsp;2015-07-28</span>
+		<span class="time"> </span>
+        <span class="useragent_output_custom"></span>
+        <span class="useragent_output_custom"></span> 
+		<span class="reply">
+		        <!-- 正常情况 -->
+           <a onclick="return addComment.moveForm( 'comment-114336','114336', 'respond','73517' ) " href="http://www.freebuf.com/articles/terminal/73517.html?replytocom=114336#respond" class="comment-reply-link" rel="nofollow">回复</a>
+        	    </span>
+		<span class="floor">6楼</span>
+	</div>
+	    <div class="txt">
+	  <p class="useragent_output_custom"></p>
+      <p>收购新浪微博 XSS CSRF  有的私聊！！</p>
+<div class="vote" id="vote-114336"><span id="acv_stat_114336"></span><a class="ilike_icon" id="vote4-114336" href="javascript:acv_vote(114336,1);">亮了</a>(<span id="cos_support-114336">1</span>)</div>
+	</div></div>
+</li><!-- #comment-## -->
+<li class="comment byuser comment-author-literatebear even thread-even depth-1" id="li-comment-114338">
+    <div id="comment-114338">
+        <div class="photo"> <a href="http://www.freebuf.com/author/LiterateBear">
+    <img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/knife2.png"></a>
+     </div>
+    <div class="tit"> 
+	    <span class="name"> <a href="http://www.freebuf.com/author/LiterateBear" target="_blank">LiterateBear&nbsp;</a>  </span>
+        		
+		<span class="icon-f"> </span>
+		<span class="rank">(1级)</span>
+				<span class="explain">  </span>
+		<span class="time">&nbsp;2015-07-28</span>
+		<span class="time"> </span>
+        <span class="useragent_output_custom"></span>
+        <span class="useragent_output_custom"></span> 
+		<span class="reply">
+		        <!-- 正常情况 -->
+           <a onclick="return addComment.moveForm( 'comment-114338','114338', 'respond','73517' ) " href="http://www.freebuf.com/articles/terminal/73517.html?replytocom=114338#respond" class="comment-reply-link" rel="nofollow">回复</a>
+        	    </span>
+		<span class="floor">7楼</span>
+	</div>
+	    <div class="txt">
+	  <p class="useragent_output_custom"></p>
+      <p>求exp～</p>
+<div class="vote" id="vote-114338"><span id="acv_stat_114338"></span><a class="ilike_icon" id="vote4-114338" href="javascript:acv_vote(114338,1);">亮了</a>(<span id="cos_support-114338">1</span>)</div>
+	</div></div>
+</li><!-- #comment-## -->
+<li class="comment byuser comment-author-64646 odd alt thread-odd thread-alt depth-1" id="li-comment-114424">
+    <div id="comment-114424">
+        <div class="photo"> <a href="http://www.freebuf.com/author/%E8%8E%89%E4%BA%9A%E5%BE%B7%E7%90%B3">
+    <img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/wp-user-avatar-96x96.png"></a>
+     </div>
+    <div class="tit"> 
+	    <span class="name"> <a href="http://www.freebuf.com/author/%E8%8E%89%E4%BA%9A%E5%BE%B7%E7%90%B3" target="_blank">莉亚德琳&nbsp;</a>  </span>
+        		
+		<span class="icon-f"> </span>
+		<span class="rank">(1级)</span>
+				<span class="explain">  </span>
+		<span class="time">&nbsp;2015-07-29</span>
+		<span class="time"> </span>
+        <span class="useragent_output_custom"></span>
+        <span class="useragent_output_custom"></span> 
+		<span class="reply">
+		        <!-- 正常情况 -->
+           <a onclick="return addComment.moveForm( 'comment-114424','114424', 'respond','73517' ) " href="http://www.freebuf.com/articles/terminal/73517.html?replytocom=114424#respond" class="comment-reply-link" rel="nofollow">回复</a>
+        	    </span>
+		<span class="floor">8楼</span>
+	</div>
+	    <div class="txt">
+	  <p class="useragent_output_custom"></p>
+      <p>av/media。好吧我只看到了这几个词</p>
+<div class="vote" id="vote-114424"><span id="acv_stat_114424"></span><a class="ilike_icon" id="vote4-114424" href="javascript:acv_vote(114424,1);">亮了</a>(<span id="cos_support-114424">1</span>)</div>
+	</div></div>
+</li><!-- #comment-## -->
+<li class="comment even thread-even depth-1" id="li-comment-114498">
+    <div id="comment-114498">
+        <div class="photo">     <img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/pic15.png">     </div>
+    <div class="tit"> 
+	    <span class="name"> 金山毒霸<span class="weibo"></span> </span>
+        		<span class="explain">  </span>
+		<span class="time">&nbsp;2015-07-29</span>
+		<span class="time"> </span>
+        <span class="useragent_output_custom"></span>
+        <span class="useragent_output_custom"></span> 
+		<span class="reply">
+		        <!-- 正常情况 -->
+           <a onclick="return addComment.moveForm( 'comment-114498','114498', 'respond','73517' ) " href="http://www.freebuf.com/articles/terminal/73517.html?replytocom=114498#respond" class="comment-reply-link" rel="nofollow">回复</a>
+        	    </span>
+		<span class="floor">9楼</span>
+	</div>
+	    <div class="txt">
+	  <p class="useragent_output_custom"></p>
+      <p>我厂程序猿正密切关注该漏洞的更多信息，目前已经得到漏洞poc</p>
+<div class="vote" id="vote-114498"><span id="acv_stat_114498"></span><a class="ilike_icon" id="vote4-114498" href="javascript:acv_vote(114498,1);">亮了</a>(<span id="cos_support-114498">0</span>)</div>
+	</div></div>
+</li><!-- #comment-## -->
+      </ul>
+      <div class="commentnav page01" style="padding-top:10px; text-align: center;">
+               </div>
+	  
+
+<div id="respond" class="comment-box">
+    <form action="http://www.freebuf.com/wp-comments-post.php" method="post" id="commentform">
+        <div id="comment-author-info">
+	    <div class="login-other">
+		  <div class="login_button login_icon_sina" title="使用新浪微博登陆" onclick="login_button_click('sina')"></div>
+          <div class="login_button login_icon_qq" title="使用腾讯QQ登陆" onclick="login_button_click('qq')"></div></div>
+        <div class="login-input">
+	    <p><label for="author">昵称</label>
+		          <input type="text" name="author" id="author" value="" size="14" tabindex="1" aria-required="true" placeholder="请输入昵称" required="">
+        </p><span>必须</span><span>您当前尚未登录。<a class="simplemodal-login" href="http://www.freebuf.com/wp-login.php?redirect_to=http%3A%2F%2Ffreebuf.com%2Farticles%2Fterminal%2F73517.html" title="登陆">登陆？</a><a href="http://www.freebuf.com/wp-login.php?action=register" target="_blank">注册</a></span></div>
+		<div class="login-input">
+		  <p><label for="email">邮箱</label><input type="text" name="email" id="email" value="" size="25" tabindex="2" aria-required="true" placeholder="请输入邮箱地址" required=""></p>
+		<span>必须（保密）</span>
+		</div>
+    </div>
+
+        <div id="test" class="post-area">
+      <div class="holiday"></div>
+	    <div class="comment-editor">
+			<a id="comment-smiley" href="javascript:;">表情</a><a href="javascript:embedImage();">插图</a>
+	    </div>
+        <div id="smileys">
+           <a title="mrgreen" href="javascript:grin(':mrgreen:')"><img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/icon_mrgreen.gif"></a><a title="razz" href="javascript:grin(':razz:')"><img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/icon_razz.gif"></a><a title="sad" href="javascript:grin(':sad:')"><img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/icon_sad.gif"></a><a title="smile" href="javascript:grin(':smile:')"><img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/icon_smile.gif"></a><a title="oops" href="javascript:grin(':oops:')"><img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/icon_redface.gif"></a><a title="grin" href="javascript:grin(':grin:')"><img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/icon_biggrin.gif"></a><a title="eek" href="javascript:grin(':eek:')"><img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/icon_surprised.gif"></a><a title="???" href="javascript:grin(':???:')"><img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/icon_confused.gif"></a><a title="cool" href="javascript:grin(':cool:')"><img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/icon_cool.gif"></a><a title="lol" href="javascript:grin(':lol:')"><img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/icon_lol.gif"></a><a title="mad" href="javascript:grin(':mad:')"><img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/icon_mad.gif"></a><a title="twisted" href="javascript:grin(':twisted:')"><img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/icon_twisted.gif"></a><a title="roll" href="javascript:grin(':roll:')"><img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/icon_rolleyes.gif"></a><a title="wink" href="javascript:grin(':wink:')"><img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/icon_wink.gif"></a><a title="idea" href="javascript:grin(':idea:')"><img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/icon_idea.gif"></a><a title="arrow" href="javascript:grin(':arrow:')"><img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/icon_arrow.gif"></a><a title="neutral" href="javascript:grin(':neutral:')"><img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/icon_neutral.gif"></a><a title="cry" href="javascript:grin(':cry:')"><img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/icon_cry.gif"></a><a title="?" href="javascript:grin(':?:')"><img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/icon_question.gif"></a><a title="evil" href="javascript:grin(':evil:')"><img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/icon_evil.gif"></a><a title="shock" href="javascript:grin(':shock:')"><img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/icon_eek.gif"></a><a title="!" href="javascript:grin(':!:')"><img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/icon_exclaim.gif"></a>        </div>
+         <textarea name="comment" id="comment" cols="100%" rows="7" tabindex="4" style="overflow-x:hidden; overflow-y:hidden; border:0; width:100%;" onkeydown="if(event.ctrlKey&amp;&amp;event.keyCode==13){document.getElementById('submit').click();return false};"></textarea><div id="loading" style="display: none;"><img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/wpspin_light.gif" style="vertical-align:middle;" alt=""> 正在提交, 请稍候...</div><div id="error" style="display: none;">#</div>
+    </div>
+      <div class="subcon but">
+      <input class="btn btn-success" type="submit" name="submit" id="submit" tabindex="5" value="提交评论(Ctrl+Enter)">
+      <a rel="nofollow" class="btn btn-default" id="cancel-comment-reply-link" href="javascript:;">取消</a>
+      <div class="checkbox"><input type="hidden" name="comment_post_ID" value="73517" id="comment_post_ID">
+<input type="hidden" name="comment_parent" id="comment_parent" value="0">
+<label for="comment_mail_notify" class="comment_mail"><input type="checkbox" name="comment_mail_notify" id="comment_mail_notify" value="comment_mail_notify" checked="checked">有人回复时邮件通知我</label></div>
+      </div>
+    <input name="Token" id="Token" type="hidden" value="pqw1vk">
+  </form>
+  </div>
+</div>	  
+<div class="commentshow">
+<div class="comments-loading">Loading...</div>
+</div>
+    </div>
+    <div class="col-md-3 visible-md-block visible-lg-block">
+	  
+      <div class="form-group has-active search-col search-in">
+        <form id="hpsform-new" class="navbar-search navbar-form" onsubmit="return dispatch()">
+          <div class="form-group">
+            <input id="q" class="input form-control" type="text" placeholder="关键字查找" autocomplete="off" title="关键字查找" name="q">
+            <button class="submit" onclick="INTEL_TYPE_AHEAD.onSubmitHps(' 关键字查找', '/content/www/cn/zh', 'zh_CN')" value="Search" type="submit"></button>
+          </div>
+        </form>
+      </div>
+      <div class="read visible-md-block visible-lg-block">
+        <div class="main-tit02">
+          <h3>相关阅读</h3>
+        </div>		
+        <div class="photo"> <a href="http://www.freebuf.com/articles/terminal/72450.html" target="_blank" title="HackingTeam安卓监控软件RCS病毒样本分析"><img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/hacking_team_large_verge_medium_landscape-220x150.png" width="270" height="208"></a>
+          <p><a href="http://www.freebuf.com/articles/terminal/72450.html" target="_blank" title="HackingTeam安卓监控软件RCS病毒样本分析">HackingTeam安卓监控软件RCS病毒样本分析</a></p>
+        </div><ul>
+  <li><a href="http://www.freebuf.com/news/21579.html" target="_blank" title="走近科学：破解苹果MacBook摄像头进行秘密监控">走近科学：破解苹果MacBook摄像头进行秘密监控</a></li>
+  
+  <li><a href="http://www.freebuf.com/articles/terminal/65611.html" target="_blank" title="控制指令高达二十多种：远控木马Dendoroid.B分析报告">控制指令高达二十多种：远控木马Dendoroid.B分析报告</a></li>
+  
+  <li><a href="http://www.freebuf.com/articles/terminal/5401.html" target="_blank" title="多伦多第一届硬件黑客马拉松">多伦多第一届硬件黑客马拉松</a></li>
+  </ul>      </div>
+      <!--<div class="ad-wrap"><a href="http://www.ijiami.cn/?freebuf.com" target="_blank"><img width="100%" src="http://image.3001.net/images/20141201/14174039186901.jpg"></a></div>-->
+      <div class="panel panel-default rec-spe">
+        <div class="main-tit03 colour-blue">
+          <h3>特别推荐</h3>
+        </div>
+        <div class="rec-img"><a href="http://security.tencent.com/" target="_blank"><img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/tsrc.png"></a></div>
+      </div>
+ 
+	  <div id="mar-right-sticky-wrapper" class="sticky-wrapper" style="height: 241px;"><div id="mar-right">
+      <!--<div class="read visible-lg-block">
+        <div class="main-tit04">
+          <h3>商城新品</h3>
+        </div>
+        <div id="slider" class="nivoSlider">  </div>
+      </div>-->
+      <div class="panel panel-default code"> <img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/code.jpg" width="192" height="192">
+        <p>关注我们  分享每日精选文章</p>
+      </div>
+	  </div></div>
+    </div>
+  </div>
+  <div class="row marvellous visible-lg-block">
+    <h3>不容错过</h3>
+    <ul>
+      <li><a href="http://www.freebuf.com/news/39788.html" rel="bookmark" title="Samba 4.x.x全版本存在命令执行漏洞">Samba 4.x.x全版本存在命令执行漏洞</a>
+        <p>		  <span class="name"><a href="http://www.freebuf.com/author/%e5%ad%90%e5%a4%8f" title="由 子夏 发布" rel="author">子夏</a></span>
+		  		<span class="time">2014-08-02</span></p>
+      </li>
+      <li><a href="http://www.freebuf.com/news/special/58844.html" rel="bookmark" title="裸奔吧！APP：揭秘安卓UC浏览器与PP助手私密文件夹羞羞的事情">裸奔吧！APP：揭秘安卓UC浏览器与PP助手私密文件夹羞羞的事情</a>
+        <p>		  <span class="name"><a href="http://www.freebuf.com/author/p0tt1" title="由 p0tt1 发布" rel="author">p0tt1</a></span>
+		  		<span class="time">2015-02-11</span></p>
+      </li>
+      <li><a href="http://www.freebuf.com/news/70733.html" rel="bookmark" title="评测告诉你：那些免费代理悄悄做的龌蹉事儿">评测告诉你：那些免费代理悄悄做的龌蹉事儿</a>
+        <p>		  <span class="name"><a href="http://www.freebuf.com/author/%e6%98%8e%e6%98%8e%e7%9f%a5%e9%81%93" title="由 明明知道 发布" rel="author">明明知道</a></span>
+		  		<span class="time">2015-06-25</span></p>
+      </li>
+      <li><a href="http://www.freebuf.com/news/15865.html" rel="bookmark" title="Adobe Photoshop源代码以及3800万用户信息泄漏（更新）">Adobe Photoshop源代码以及3800万用户信息泄漏（更新）</a>
+        <p>		  <span class="name"><a href="http://www.freebuf.com/author/fu4k" title="由 fu4k 发布" rel="author">fu4k</a></span>
+		  		<span class="time">2013-10-31</span></p>
+      </li>
+    </ul>
+  </div>
+</div>
+
+
+
+<!----------footer---------->
+<div class="footer">
+  <div class="container">
+    <div class="footer-list col-sm-2 col-md-2">
+      <h3>FREEBUF</h3>
+      <ul>
+        <li><a href="http://www.freebuf.com/dis">免责声明</a></li>
+        <li><a href="http://www.freebuf.com/news/others/864.html">关于我们</a></li>
+        <li><a href="http://www.freebuf.com/jobs/40386.html">加入我们</a></li>
+        <li><a href="http://www.freebuf.com/donate">捐助我们</a></li>
+      </ul>
+    </div>
+    <div class="footer-list col-sm-2 col-md-2">
+      <h3>广告及服务</h3>
+      <ul>
+        <li><a target="_blank" href="mailto:root@freebuf.com">寻求报道</a></li>
+        <li><a href="http://www.freebuf.com/advertise">广告合作</a></li>
+        <li><a target="_blank" href="mailto:root@freebuf.com">联系我们</a></li>
+        <li><a href="http://www.freebuf.com/friends">友情链接</a></li>
+      </ul>
+    </div>
+    <div class="footer-list col-sm-2 col-md-2">
+      <h3>关注我们</h3>
+      <ul>
+        <li><a target="_blank" href="http://www.freebuf.com/articles/terminal/73517.html#">官方微信<!--<span><img width="150" src="http://image.3001.net/images/index/freebufqrcode.jpg"></span>--></a></li>
+        <li><a rel="nofollow" target="_blank" href="http://weibo.com/freebuf">新浪微博</a></li>
+        <li><a rel="nofollow" target="_blank" href="http://t.qq.com/freebuf">腾讯微博</a></li>
+        <li><a rel="nofollow" target="_blank" href="http://twitter.com/freebuf">Twitter</a></li>
+      </ul>
+    </div>
+    <div class="footer-list col-sm-2 col-md-2">
+      <h3>赞助商</h3>
+      <ul>
+        <li style="padding:6px 0 10px;"><a rel="nofollow" target="_blank" href="http://www.qcloud.com/?freebuf"><img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/qcloud.png"></a></li>
+        <li style="padding:6px 0 10px;"><a rel="nofollow" target="_blank" href="http://www.aliyun.com/?freebuf"><img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/ali.png"></a></li>
+        <li><a rel="nofollow" target="_blank" href="http://www.upyun.com/?freebuf"><img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/upyun.png"></a></li>
+      </ul>
+    </div>
+    <div class="footer-logo col-sm-4 col-md-4 pull-right"><img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/freebufrobot_shendanjie.png"></div>
+  </div>
+  <div class="copyright"><div class="container"><p>Copyright © 2013 WWW.FREEBUF.COM All Rights Reserved 沪ICP备13033796号</p><span><img src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/icon-aly.png"></span></div></div>
+</div>
+<div class="bottom_tools"><a id="scrollUp" href="javascript:;" title="飞回顶部"></a></div>
+<!----------footer end----------> 
+
+
+
+<img alt="css.php" src="安卓Stagefright高危漏洞初探 - FreeBuf.COM _ 关注黑客与极客_files/css.php" width="1" height="1">
+
+
+
+<div class="highslide-container" style="padding: 0px; border: none; margin: 0px; position: absolute; left: 0px; top: 0px; width: 100%; z-index: 1001; direction: ltr;"><a class="highslide-loading" title="点击关闭" href="javascript:;" style="position: absolute; top: -9999px; opacity: 0.75; z-index: 1;">正在加载中...</a><div style="display: none;"></div><div class="highslide-viewport highslide-viewport-size" style="padding: 0px; border: none; margin: 0px; visibility: hidden;"></div><table cellspacing="0" style="padding: 0px; border: none; margin: 0px; visibility: hidden; position: absolute; border-collapse: collapse; width: 0px;"><tbody style="padding: 0px; border: none; margin: 0px;"><tr style="padding: 0px; border: none; margin: 0px; height: auto;"><td style="padding: 0px; border: none; margin: 0px; line-height: 0; font-size: 0px; height: 20px; width: 20px; background: url(http://www.freebuf.com/buf/plugins/auto-highslide/images/graphics/outlines/rounded-white.png) 0px 0px;"></td><td style="padding: 0px; border: none; margin: 0px; line-height: 0; font-size: 0px; height: 20px; width: 20px; background: url(http://www.freebuf.com/buf/plugins/auto-highslide/images/graphics/outlines/rounded-white.png) 0px -40px;"></td><td style="padding: 0px; border: none; margin: 0px; line-height: 0; font-size: 0px; height: 20px; width: 20px; background: url(http://www.freebuf.com/buf/plugins/auto-highslide/images/graphics/outlines/rounded-white.png) -20px 0px;"></td></tr><tr style="padding: 0px; border: none; margin: 0px; height: auto;"><td style="padding: 0px; border: none; margin: 0px; line-height: 0; font-size: 0px; height: 20px; width: 20px; background: url(http://www.freebuf.com/buf/plugins/auto-highslide/images/graphics/outlines/rounded-white.png) 0px -80px;"></td><td class="rounded-white highslide-outline" style="padding: 0px; border: none; margin: 0px; position: relative;"></td><td style="padding: 0px; border: none; margin: 0px; line-height: 0; font-size: 0px; height: 20px; width: 20px; background: url(http://www.freebuf.com/buf/plugins/auto-highslide/images/graphics/outlines/rounded-white.png) -20px -80px;"></td></tr><tr style="padding: 0px; border: none; margin: 0px; height: auto;"><td style="padding: 0px; border: none; margin: 0px; line-height: 0; font-size: 0px; height: 20px; width: 20px; background: url(http://www.freebuf.com/buf/plugins/auto-highslide/images/graphics/outlines/rounded-white.png) 0px -20px;"></td><td style="padding: 0px; border: none; margin: 0px; line-height: 0; font-size: 0px; height: 20px; width: 20px; background: url(http://www.freebuf.com/buf/plugins/auto-highslide/images/graphics/outlines/rounded-white.png) 0px -60px;"></td><td style="padding: 0px; border: none; margin: 0px; line-height: 0; font-size: 0px; height: 20px; width: 20px; background: url(http://www.freebuf.com/buf/plugins/auto-highslide/images/graphics/outlines/rounded-white.png) -20px -20px;"></td></tr></tbody></table></div></body></html>
