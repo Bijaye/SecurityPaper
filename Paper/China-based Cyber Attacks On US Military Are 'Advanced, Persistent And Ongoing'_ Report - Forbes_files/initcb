@@ -1,0 +1,37 @@
+var __wsconf = window.__wsconf = window.__wsconf || {};
+__wsconf.section = 'Forbes';
+__wsconf.appId = '1056';
+__wsconf.appChannel = 0;
+__wsconf.znl = {"10336":{"isTrackingUnit":true,"width":300,"fp":false,"conf":{"ContainerElementSelector":"#article_container_0_recx_0","ElementSelectorPosition":"inside","Width":300.0,"Height":250.0},"type":"normal","height":250},"10337":{"isTrackingUnit":true,"width":300,"fp":false,"conf":{"ContainerElementSelector":"#loge","ElementSelectorPosition":"inside","Width":300.0,"Height":250.0},"type":"normal","height":250},"10338":{"isTrackingUnit":true,"width":300,"fp":false,"conf":{"ContainerElementSelector":"#article_container_0_rec","ElementSelectorPosition":"inside","Width":300.0,"Height":250.0},"type":"normal","height":250},"22371":{"isTrackingUnit":false,"width":300,"fp":false,"conf":{"Selector":"google_ads_iframe_/?7175","Source":"googlesyndication.com","Width":300.0,"Height":600.0,"PotentialGtsDuration":20.0,"IgnoreNotMeasurable":true},"type":"allocation","height":600},"10339":{"isTrackingUnit":true,"width":300,"fp":false,"conf":{"ContainerElementSelector":"#article_container_1_rec","ElementSelectorPosition":"inside","Width":300.0,"Height":250.0},"type":"normal","height":250},"10340":{"isTrackingUnit":true,"width":300,"fp":false,"conf":{"ContainerElementSelector":"#article_container_3_loge","ElementSelectorPosition":"inside","Width":300.0,"Height":250.0},"type":"normal","height":250},"22374":{"isTrackingUnit":false,"width":300,"fp":false,"conf":{"Selector":"google_ads_iframe_/?7175","Source":"googlesyndication.com","Width":300.0,"Height":250.0,"PotentialGtsDuration":20.0,"IgnoreNotMeasurable":true},"type":"allocation","height":250},"22663":{"isTrackingUnit":false,"width":320,"fp":false,"conf":{"Selector":"google_ads_iframe_/?7175","Source":"googlesyndication.com","Width":320.0,"Height":50.0,"PotentialGtsDuration":20.0,"IgnoreNotMeasurable":true},"type":"allocation","height":50},"22375":{"isTrackingUnit":false,"width":728,"fp":false,"conf":{"Selector":"google_ads_iframe_/?7175","Source":"googlesyndication.com","Width":728.0,"Height":90.0,"PotentialGtsDuration":20.0,"IgnoreNotMeasurable":true},"type":"allocation","height":90},"197175":{"isTrackingUnit":false,"width":970,"fp":false,"conf":{"Selector":"google_ads_iframe_/?7175","Source":"googlesyndication.com","Width":970.0,"Height":90.0,"PotentialGtsDuration":20.0,"IgnoreNotMeasurable":false},"type":"allocation","height":90},"197174":{"isTrackingUnit":false,"width":160,"fp":false,"conf":{"Width":160.0,"Height":600.0,"Selector":"google_ads_iframe_/?7175","Source":"googlesyndication.com","PotentialGtsDuration":20.0,"IgnoreNotMeasurable":false},"type":"allocation","height":600},"197177":{"isTrackingUnit":false,"width":336,"fp":false,"conf":{"Selector":"google_ads_iframe_/?7175","Source":"googlesyndication.com","Width":336.0,"Height":280.0,"PotentialGtsDuration":20.0,"IgnoreNotMeasurable":false},"type":"allocation","height":280},"197176":{"isTrackingUnit":false,"width":970,"fp":false,"conf":{"Selector":"google_ads_iframe_/?7175","Source":"googlesyndication.com","Width":970.0,"Height":66.0,"PotentialGtsDuration":20.0,"IgnoreNotMeasurable":false},"type":"allocation","height":66},"22716":{"isTrackingUnit":false,"width":300,"fp":false,"conf":{"Selector":"google_ads_iframe_/?7175","Source":"googlesyndication.com","Width":300.0,"Height":50.0,"PotentialGtsDuration":20.0,"IgnoreNotMeasurable":true},"type":"allocation","height":50},"10332":{"isTrackingUnit":true,"width":1170,"fp":false,"conf":{"Width":1170.0,"Height":250.0,"Selector":"google_ads_iframe_"},"type":"autotag","height":250},"10335":{"isTrackingUnit":true,"width":300,"fp":false,"conf":{"ContainerElementSelector":"#article_container_0_loge","ElementSelectorPosition":"inside","Width":300.0,"Height":250.0},"type":"normal","height":250}};
+__wsconf.rootPath = '//wsc4.webspectator.com';
+__wsconf.sessionId = '75BDA40576979552';
+__wsconf.contextId = '0EC5';
+__wsconf.cid = '3A5FB6A9';
+__wsconf.vtm = 'TFPC';
+__wsconf.g_country = 'TW';
+__wsconf.g_region = 'unknown';
+__wsconf.g_city = 'Taipei';
+__wsconf.dads = 0;
+__wsconf.frt= "20";
+__wsconf.ortc= {"url":"window.location.protocol + \u0027//ortc-prd.realtime.co/server\u0027 + (window.location.protocol \u003d\u003d \u0027https:\u0027 ? \u0027/ssl/\u0027 : \u0027/\u0027) + \u00272.1/\u0027","apk":"R60tcQ","aut":"ws.client"};
+__wsconf.smc= {"disconnectTimer":90.0};
+
+
+var s0 = document.createElement('script');
+s0.type = 'text/javascript';
+s0.async = true;
+s0.src = "//dfdbz2tdq3k01.cloudfront.net/js/2.1.0/ortcstandalonegz.js";
+document.getElementsByTagName('HEAD')[0].appendChild(s0);
+
+var s1 = document.createElement('script');
+s1.type = 'text/javascript';
+s1.async = true;
+s1.src = "//ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js";
+document.getElementsByTagName('HEAD')[0].appendChild(s1);
+
+var s2 = document.createElement('script');
+s2.type = 'text/javascript';
+s2.async = true;
+s2.src = "//wfpscripts.webspectator.com/ws-4.3.6i_cc.js";
+document.getElementsByTagName('HEAD')[0].appendChild(s2);
+

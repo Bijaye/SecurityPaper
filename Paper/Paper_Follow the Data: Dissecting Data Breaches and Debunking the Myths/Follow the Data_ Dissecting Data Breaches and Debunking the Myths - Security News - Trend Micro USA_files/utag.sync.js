@@ -1,0 +1,3 @@
+//tealium universal tag - utag.sync ut4.0.201503301252, Copyright 2015 Tealium.com Inc. All Rights Reserved.
+if(document.domain.indexOf("www.antivirus.com")>-1){document.write("<script src='//cdn.optimizely.com/js/166255993.js'></script>");}
+if(document.domain.indexOf("resources.trendmicro.com")>-1&&location.pathname.indexOf("thankyou.html")==-1){document.write("<script src='//cdn.optimizely.com/js/64284625.js'></script>");}
